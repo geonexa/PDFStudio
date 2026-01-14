@@ -166,7 +166,7 @@ export default function Home() {
                 </Accordion.Trigger>
                 <Accordion.Content className="faq-content">
                   <p className="faq-answer">
-                    Since all processing happens in your browser, the limits depend on your device's memory. Most modern devices can handle PDFs up to several hundred megabytes without issues.
+                    Since all processing happens in your browser, the limits depend on your device&apos;s memory. Most modern devices can handle PDFs up to several hundred megabytes without issues.
                   </p>
                 </Accordion.Content>
               </Accordion.Item>
