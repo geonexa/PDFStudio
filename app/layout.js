@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://pdfstudio.online'),
+  metadataBase: new URL('https://pdfstudio.online'),
   title: {
     default: 'PDFStudio - Split, Merge, Compress PDFs Online',
     template: '%s | PDFStudio'
@@ -43,11 +43,8 @@ export const metadata = {
     },
   },
   icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
   },
   alternates: {
     canonical: '/',

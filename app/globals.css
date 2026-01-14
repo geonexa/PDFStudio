@@ -20,6 +20,14 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-attachment: fixed;
   min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    background-attachment: scroll;
+  }
 }
 
 body {
@@ -38,6 +46,8 @@ button {
   cursor: pointer;
   border: none;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 input {
@@ -50,6 +60,8 @@ input {
   gap: 0.5rem;
   border-bottom: 2px solid #e2e8f0;
   margin-bottom: 2rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 [data-radix-tabs-trigger] {
@@ -63,6 +75,16 @@ input {
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   transition: all 0.2s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (max-width: 480px) {
+  [data-radix-tabs-trigger] {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
 }
 
 [data-radix-tabs-trigger]:hover {
@@ -97,6 +119,14 @@ input {
   width: 90vw;
   max-width: 500px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 480px) {
+  [data-radix-dialog-content] {
+    width: 95vw;
+    padding: 1.25rem;
+    max-width: none;
+  }
 }
 
 @keyframes overlayShow {

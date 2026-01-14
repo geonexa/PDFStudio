@@ -469,8 +469,32 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .merge-header {
+    padding: 1.5rem 0;
+  }
+
   .merge-title {
     font-size: 2rem;
+  }
+
+  .merge-subtitle {
+    font-size: 1rem;
+  }
+
+  .merge-main {
+    padding: 2rem 0;
+  }
+
+  .upload-area {
+    padding: 2rem 1.5rem;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
   }
 
   .files-section {
@@ -480,6 +504,7 @@
   .file-item {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
   }
 
   .file-preview-container {
@@ -505,5 +530,75 @@
     width: 95vw;
     height: 90vh;
     max-height: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .merge-header {
+    padding: 1.25rem 0;
+  }
+
+  .merge-title {
+    font-size: 1.75rem;
+  }
+
+  .merge-subtitle {
+    font-size: 0.9375rem;
+  }
+
+  .merge-main {
+    padding: 1.5rem 0;
+  }
+
+  .upload-area {
+    padding: 1.5rem 1rem;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .upload-text strong {
+    font-size: 1rem;
+  }
+
+  .upload-text span {
+    font-size: 0.875rem;
+  }
+
+  .files-section {
+    padding: 1.25rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .file-item {
+    padding: 1.25rem;
+  }
+
+  .file-name {
+    font-size: 1rem;
+  }
+
+  .file-details {
+    font-size: 0.875rem;
+  }
+
+  .file-preview {
+    height: 180px;
+  }
+
+  .remove-button {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.125rem;
+  }
+
+  .merge-button {
+    padding: 1rem;
+    font-size: 1.125rem;
   }
 }

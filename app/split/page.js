@@ -41,7 +41,7 @@ export default function SplitPage() {
       const pdfDoc = await PDFDocument.load(arrayBuffer)
       const pages = pdfDoc.getPageCount()
       setTotalPages(pages)
-      setRanges([{ start: 1, end: pages }])
+      setRanges([{ start: 1, end: pages || 1 }])
     } catch (err) {
       setError('Failed to load PDF. Please try another file.')
       console.error(err)
@@ -59,34 +59,83 @@ export default function SplitPage() {
   }
 
   const updateRange = (index, field, value) => {
-    const numValue = parseInt(value) || 1
     const newRanges = [...ranges]
-    newRanges[index] = {
-      ...newRanges[index],
-      [field]: Math.max(1, Math.min(numValue, totalPages || 1)),
-    }
     
-    // Ensure start <= end
-    if (field === 'start' && newRanges[index].start > newRanges[index].end) {
-      newRanges[index].end = newRanges[index].start
-    }
-    if (field === 'end' && newRanges[index].end < newRanges[index].start) {
-      newRanges[index].start = newRanges[index].end
+    // Allow empty string while typing
+    if (value === '' || value === null || value === undefined) {
+      newRanges[index] = {
+        ...newRanges[index],
+        [field]: '',
+      }
+      setRanges(newRanges)
+      return
     }
 
-    setRanges(newRanges)
+    // Trim and clean the value
+    const trimmedValue = String(value).trim()
+    
+    // Allow partial input (like just "1" while typing "12")
+    // Store as string if it's a valid partial number
+    if (/^\d*$/.test(trimmedValue)) {
+      // If it's a valid number string, parse and clamp it
+      if (trimmedValue !== '') {
+        const numValue = parseInt(trimmedValue, 10)
+        if (!isNaN(numValue)) {
+          const clampedValue = Math.max(1, Math.min(numValue, totalPages || 1))
+          
+          newRanges[index] = {
+            ...newRanges[index],
+            [field]: clampedValue,
+          }
+          
+          // Ensure start <= end (only if both are valid numbers)
+          const otherField = field === 'start' ? 'end' : 'start'
+          const otherValue = typeof newRanges[index][otherField] === 'number' 
+            ? newRanges[index][otherField] 
+            : parseInt(newRanges[index][otherField], 10)
+          
+          if (!isNaN(otherValue)) {
+            if (field === 'start' && clampedValue > otherValue) {
+              newRanges[index].end = clampedValue
+            }
+            if (field === 'end' && clampedValue < otherValue) {
+              newRanges[index].start = clampedValue
+            }
+          }
+          
+          setRanges(newRanges)
+        } else {
+          // Invalid number, store as empty string
+          newRanges[index] = {
+            ...newRanges[index],
+            [field]: '',
+          }
+          setRanges(newRanges)
+        }
+      } else {
+        // Empty string, store as empty
+        newRanges[index] = {
+          ...newRanges[index],
+          [field]: '',
+        }
+        setRanges(newRanges)
+      }
+    }
   }
 
   const validateRanges = () => {
     for (let i = 0; i < ranges.length; i++) {
       const range = ranges[i]
-      if (range.start < 1 || range.end < 1) {
-        return `Range ${i + 1}: Start and end must be at least 1`
+      const start = typeof range.start === 'string' && range.start === '' ? 0 : parseInt(range.start, 10)
+      const end = typeof range.end === 'string' && range.end === '' ? 0 : parseInt(range.end, 10)
+      
+      if (isNaN(start) || isNaN(end) || start < 1 || end < 1) {
+        return `Range ${i + 1}: Please enter valid page numbers`
       }
-      if (range.start > range.end) {
+      if (start > end) {
         return `Range ${i + 1}: Start page must be less than or equal to end page`
       }
-      if (range.end > totalPages) {
+      if (end > totalPages) {
         return `Range ${i + 1}: End page exceeds total pages (${totalPages})`
       }
     }
@@ -244,8 +293,21 @@ export default function SplitPage() {
                               type="number"
                               min="1"
                               max={totalPages}
-                              value={range.start}
+                              value={typeof range.start === 'string' ? range.start : (range.start || '')}
                               onChange={(e) => updateRange(index, 'start', e.target.value)}
+                              onBlur={(e) => {
+                                const val = e.target.value.trim()
+                                if (val === '' || isNaN(parseInt(val, 10))) {
+                                  updateRange(index, 'start', '1')
+                                } else {
+                                  const numVal = parseInt(val, 10)
+                                  if (numVal < 1) {
+                                    updateRange(index, 'start', '1')
+                                  } else if (numVal > totalPages) {
+                                    updateRange(index, 'start', totalPages.toString())
+                                  }
+                                }
+                              }}
                               disabled={loading}
                               className="number-input"
                             />
@@ -257,8 +319,21 @@ export default function SplitPage() {
                               type="number"
                               min="1"
                               max={totalPages}
-                              value={range.end}
+                              value={typeof range.end === 'string' ? range.end : (range.end || '')}
                               onChange={(e) => updateRange(index, 'end', e.target.value)}
+                              onBlur={(e) => {
+                                const val = e.target.value.trim()
+                                if (val === '' || isNaN(parseInt(val, 10))) {
+                                  updateRange(index, 'end', totalPages.toString())
+                                } else {
+                                  const numVal = parseInt(val, 10)
+                                  if (numVal < 1) {
+                                    updateRange(index, 'end', '1')
+                                  } else if (numVal > totalPages) {
+                                    updateRange(index, 'end', totalPages.toString())
+                                  }
+                                }
+                              }}
                               disabled={loading}
                               className="number-input"
                             />
@@ -274,47 +349,52 @@ export default function SplitPage() {
                             </button>
                           )}
                         </div>
-                        {fileUrl && range.start === range.end ? (
-                          <div className="range-preview">
-                            <div className="preview-label">Preview (Page {range.start}):</div>
-                            <div className="preview-container">
-                              <object
-                                data={getPageUrl(range.start)}
-                                type="application/pdf"
-                                className="range-pdf-preview"
-                              >
-                                <div className="preview-fallback">Page {range.start}</div>
-                              </object>
+                        {fileUrl && typeof range.start === 'number' && typeof range.end === 'number' && range.start >= 1 && range.end >= 1 && (
+                          range.start === range.end ? (
+                            <div className="range-preview">
+                              <div className="preview-label">Preview (Page {range.start}):</div>
+                              <div className="preview-container">
+                                <object
+                                  key={`preview-${index}-${range.start}-single`}
+                                  data={getPageUrl(range.start)}
+                                  type="application/pdf"
+                                  className="range-pdf-preview single-page"
+                                >
+                                  <div className="preview-fallback">Page {range.start}</div>
+                                </object>
+                              </div>
                             </div>
-                          </div>
-                        ) : fileUrl && (
-                          <div className="range-preview">
-                            <div className="preview-label">Preview (Pages {range.start}-{range.end}):</div>
-                            <div className="preview-container">
-                              <div className="preview-pages">
-                                <div className="preview-page-item">
-                                  <div className="preview-page-label">Start: {range.start}</div>
-                                  <object
-                                    data={getPageUrl(range.start)}
-                                    type="application/pdf"
-                                    className="range-pdf-preview"
-                                  >
-                                    <div className="preview-fallback">Page {range.start}</div>
-                                  </object>
-                                </div>
-                                <div className="preview-page-item">
-                                  <div className="preview-page-label">End: {range.end}</div>
-                                  <object
-                                    data={getPageUrl(range.end)}
-                                    type="application/pdf"
-                                    className="range-pdf-preview"
-                                  >
-                                    <div className="preview-fallback">Page {range.end}</div>
-                                  </object>
+                          ) : (
+                            <div className="range-preview">
+                              <div className="preview-label">Preview (Pages {range.start}-{range.end}):</div>
+                              <div className="preview-container">
+                                <div className="preview-pages">
+                                  <div className="preview-page-item">
+                                    <div className="preview-page-label">Start: Page {range.start}</div>
+                                    <object
+                                      key={`preview-${index}-start-${range.start}`}
+                                      data={getPageUrl(range.start)}
+                                      type="application/pdf"
+                                      className="range-pdf-preview full-page"
+                                    >
+                                      <div className="preview-fallback">Page {range.start}</div>
+                                    </object>
+                                  </div>
+                                  <div className="preview-page-item">
+                                    <div className="preview-page-label">End: Page {range.end}</div>
+                                    <object
+                                      key={`preview-${index}-end-${range.end}`}
+                                      data={getPageUrl(range.end)}
+                                      type="application/pdf"
+                                      className="range-pdf-preview full-page"
+                                    >
+                                      <div className="preview-fallback">Page {range.end}</div>
+                                    </object>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          )
                         )}
                       </div>
                     </div>

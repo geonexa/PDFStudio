@@ -120,6 +120,69 @@
   padding: 2rem;
 }
 
+.compression-level-section {
+  margin-bottom: 2rem;
+}
+
+.compression-level-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+.compression-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.compression-option {
+  padding: 1.25rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.compression-option:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.compression-option.active {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.compression-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.option-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.compression-option.active .option-title {
+  color: #3b82f6;
+}
+
+.option-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
 .size-info {
   display: flex;
   align-items: center;
@@ -245,12 +308,41 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .compress-header {
+    padding: 1.5rem 0;
+  }
+
   .compress-title {
     font-size: 2rem;
   }
 
+  .compress-subtitle {
+    font-size: 1rem;
+  }
+
+  .compress-main {
+    padding: 2rem 0;
+  }
+
+  .upload-area {
+    padding: 2rem 1.5rem;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+
   .compress-section {
     padding: 1.5rem;
+  }
+
+  .compression-options {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .size-info {
@@ -260,5 +352,73 @@
 
   .size-arrow {
     transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .compress-header {
+    padding: 1.25rem 0;
+  }
+
+  .compress-title {
+    font-size: 1.75rem;
+  }
+
+  .compress-subtitle {
+    font-size: 0.9375rem;
+  }
+
+  .compress-main {
+    padding: 1.5rem 0;
+  }
+
+  .upload-area {
+    padding: 1.5rem 1rem;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .upload-text strong {
+    font-size: 1rem;
+  }
+
+  .upload-text span {
+    font-size: 0.875rem;
+  }
+
+  .compress-section {
+    padding: 1.25rem;
+  }
+
+  .compression-level-label {
+    font-size: 0.8125rem;
+  }
+
+  .compression-option {
+    padding: 1rem 0.875rem;
+  }
+
+  .option-title {
+    font-size: 0.9375rem;
+  }
+
+  .option-desc {
+    font-size: 0.6875rem;
+  }
+
+  .size-value {
+    font-size: 1.25rem;
+  }
+
+  .size-label {
+    font-size: 0.8125rem;
+  }
+
+  .compress-button {
+    padding: 0.875rem;
+    font-size: 1rem;
   }
 }
